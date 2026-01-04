@@ -1,0 +1,15 @@
+# google credentials (VERY IMPORTANT)
+credentials.json
+SheetsApiCredentials/
+
+# build artifacts
+bin/
+obj/
+
+# user settings
+*.user
+*.suo
+
+# IDE configs
+.vscode/
+.idea/
