@@ -1,8 +1,11 @@
-﻿using Google.Apis.Sheets.v4;
+﻿using Google.Apis.Auth.OAuth2;
+using Google.Apis.Sheets.v4;
 using Google.Apis.Sheets.v4.Data;
+using Google.Apis.Util.Store;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text;
 using System.Threading.Tasks;
 
 public class GoogleSheetsService
@@ -26,24 +29,34 @@ public class GoogleSheetsService
         return _sheetsService;
     }
 
-    private static async Task<Google.Apis.Auth.OAuth2.UserCredential> GetCredentialsAsync()
+    private static async Task<UserCredential> GetCredentialsAsync()
     {
-        // Define the OAuth2 scope
         string[] Scopes = { SheetsService.Scope.Spreadsheets };
 
-        // Path to your credentials file
-        string clientSecretJson = "credentials.json";  // Adjust this path if necessary
+        // جرّب تقرأ الـ JSON من Environment Variable أولاً
+        string? json = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
 
-        // Load client secrets
-        var clientSecrets = Google.Apis.Auth.OAuth2.GoogleClientSecrets.FromFile(clientSecretJson).Secrets;
+        GoogleClientSecrets clientSecrets;
 
-        // Get the user's credentials (OAuth flow)
-        var credential = await Google.Apis.Auth.OAuth2.GoogleWebAuthorizationBroker.AuthorizeAsync(
-            clientSecrets,
+        if (!string.IsNullOrEmpty(json))
+        {
+            // نستخدم الـ JSON القادم من الـ env var (للـ Render)
+            using var ms = new MemoryStream(Encoding.UTF8.GetBytes(json));
+            clientSecrets = GoogleClientSecrets.FromStream(ms);
+        }
+        else
+        {
+            // تشغيل محلي: استخدم ملف credentials.json الموجود عندك على الجهاز
+            const string clientSecretJson = "credentials.json";
+            clientSecrets = GoogleClientSecrets.FromFile(clientSecretJson);
+        }
+
+        var credential = await GoogleWebAuthorizationBroker.AuthorizeAsync(
+            clientSecrets.Secrets,
             Scopes,
             "user",
-            System.Threading.CancellationToken.None,
-            new Google.Apis.Util.Store.FileDataStore("SheetsApiCredentials", true));
+            CancellationToken.None,
+            new FileDataStore("SheetsApiCredentials", true));
 
         return credential;
     }
