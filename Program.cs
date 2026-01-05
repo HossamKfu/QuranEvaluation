@@ -1,4 +1,4 @@
-var builder = WebApplication.CreateBuilder(args);
+﻿var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllers();
@@ -16,6 +16,10 @@ builder.Services.AddCors(options =>
               .AllowAnyMethod()    // Allow all HTTP methods (GET, POST, etc.)
               .AllowAnyHeader();   // Allow all headers
     });
+});
+builder.Services.AddHttpsRedirection(options =>
+{
+    options.HttpsPort = 443;  // حدد المنفذ الصحيح لـ HTTPS
 });
 var app = builder.Build();
 
