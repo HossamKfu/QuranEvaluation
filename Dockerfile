@@ -4,7 +4,7 @@ WORKDIR /app
 
 # تحديد المنفذ الذي يجب أن يستمع عليه التطبيق (HTTPS - 443)
 EXPOSE 443
-ENV ASPNETCORE_URLS=https://+:443  # تهيئة المنفذ HTTPS
+ENV ASPNETCORE_URLS=https://+:443
 
 # ====== Build image ======
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
