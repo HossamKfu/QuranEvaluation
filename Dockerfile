@@ -2,25 +2,28 @@
 FROM mcr.microsoft.com/dotnet/aspnet:9.0 AS base
 WORKDIR /app
 
-# Render يحتاج بورت واضح، نخليه 8080
-EXPOSE 8080
-ENV ASPNETCORE_URLS=http://+:8080
+# تحديد المنفذ الذي يجب أن يستمع عليه التطبيق (HTTPS - 443)
+EXPOSE 443
+ENV ASPNETCORE_URLS=https://+:443  # تهيئة المنفذ HTTPS
 
 # ====== Build image ======
 FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /src
 
-# انسخ ملف المشروع واعمَل restore
+# نسخ ملف المشروع وعمل restore
 COPY ["Eval.csproj", "./"]
 RUN dotnet restore "Eval.csproj"
 
-# انسخ باقي الملفات واعمَل publish
+# نسخ باقي الملفات وقيام الـ publish
 COPY . .
 RUN dotnet publish "Eval.csproj" -c Release -o /app/publish
 
 # ====== Final runtime image ======
 FROM base AS final
 WORKDIR /app
+
+# نسخ الملفات المنشورة من الحاوية المؤقتة
 COPY --from=build /app/publish .
 
+# تشغيل التطبيق
 ENTRYPOINT ["dotnet", "Eval.dll"]

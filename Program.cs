@@ -8,6 +8,8 @@ builder.Services.AddSwaggerGen();  // Add this line to register Swagger
 
 builder.Services.AddSingleton<GoogleSheetsService>();
 builder.Services.AddHttpClient();
+
+// CORS Policy to allow all origins
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", policy =>
@@ -17,10 +19,13 @@ builder.Services.AddCors(options =>
               .AllowAnyHeader();   // Allow all headers
     });
 });
+
+// Add HTTPS Redirection (ensure only if required)
 builder.Services.AddHttpsRedirection(options =>
 {
-    options.HttpsPort = 443;  // حدد المنفذ الصحيح لـ HTTPS
+    options.HttpsPort = 443;  // Specify the correct HTTPS port
 });
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -36,8 +41,14 @@ if (app.Environment.IsDevelopment())
         c.RoutePrefix = string.Empty;  // This makes Swagger UI available at the root URL
     });
 }
+
 app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();
+
+// Only use HTTPS redirection if not already redirected (prevent infinite redirect loops)
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();   // Enable HTTPS redirection in production
+}
 
 app.UseAuthorization();
 
