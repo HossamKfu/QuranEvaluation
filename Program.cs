@@ -1,59 +1,46 @@
 ﻿var builder = WebApplication.CreateBuilder(args);
 
-// Setup services
+// Add services to the container.
 builder.Services.AddControllers();
-builder.Services.AddSwaggerGen();
 
-// Register GoogleSheetsService and HttpClient
+// Register Swagger services (Swashbuckle)
+builder.Services.AddSwaggerGen();  // Add this line to register Swagger
+
 builder.Services.AddSingleton<GoogleSheetsService>();
-builder.Services.AddHttpClient<GoogleSheetsService>();  // Ensure GoogleSheetsService can use HttpClient
-
-// CORS Policy to allow all origins
+builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins", policy =>
     {
-        policy.AllowAnyOrigin()
-              .AllowAnyMethod()
-              .AllowAnyHeader();
+        policy.AllowAnyOrigin()    // Allow all origins
+              .AllowAnyMethod()    // Allow all HTTP methods (GET, POST, etc.)
+              .AllowAnyHeader();   // Allow all headers
     });
 });
-
-// Bind the application to the correct port depending on the environment (Render handles HTTPS)
-var port = Environment.GetEnvironmentVariable("PORT") ?? "10000"; // Default to port 10000 if not set
-builder.WebHost.UseUrls($"http://0.0.0.0:{port}");  // Bind to 0.0.0.0 for Render
-
-// Disable HTTPS Redirection in production because Render handles it automatically
-if (builder.Environment.IsDevelopment())
+builder.Services.AddHttpsRedirection(options =>
 {
-    builder.Services.AddHttpsRedirection(options =>
-    {
-        options.HttpsPort = 443;  // You can keep this for local dev testing if needed
-    });
-}
-
+    options.HttpsPort = 443;  // حدد المنفذ الصحيح لـ HTTPS
+});
 var app = builder.Build();
 
-// Configure the HTTP request pipeline
+// Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
+    // Enable middleware to serve Swagger as a JSON endpoint.
     app.UseSwagger();
+
+    // Enable middleware to serve Swagger UI (HTML, CSS, JS, etc.)
     app.UseSwaggerUI(c =>
     {
-        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
-        c.RoutePrefix = string.Empty;  // Make Swagger UI available at the root URL
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1"); // Specify Swagger endpoint
+        c.RoutePrefix = string.Empty;  // This makes Swagger UI available at the root URL
     });
 }
-
-// Use CORS policy
 app.UseCors("AllowAllOrigins");
-
-// HTTPS redirection is not necessary for production since Render handles it
-if (app.Environment.IsDevelopment())
-{
-    app.UseHttpsRedirection();  // Only enable this for local development or testing
-}
+app.UseHttpsRedirection();
 
 app.UseAuthorization();
+
 app.MapControllers();
+
 app.Run();
