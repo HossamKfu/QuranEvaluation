@@ -15,11 +15,13 @@ builder.Services.AddCors(options =>
     });
 });
 
-// Skip HTTPS redirection in development
-if (builder.Environment.IsProduction())
+// Disable HTTPS Redirection in production because Render handles it automatically
+if (builder.Environment.IsDevelopment())
 {
-    // Remove this since Render handles HTTPS
-    // builder.Services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
+    builder.Services.AddHttpsRedirection(options =>
+    {
+        options.HttpsPort = 443;  // You can keep this for local dev testing
+    });
 }
 
 var app = builder.Build();
@@ -27,7 +29,6 @@ var app = builder.Build();
 // Configure the HTTP request pipeline
 if (app.Environment.IsDevelopment())
 {
-    // Enable Swagger UI only in development
     app.UseSwagger();
     app.UseSwaggerUI(c =>
     {
@@ -36,8 +37,14 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Use CORS policy and enable HTTPS redirection only if Render doesn't handle HTTPS (this won't be needed in most cases).
+// Use CORS policy
 app.UseCors("AllowAllOrigins");
+
+// Remove this from production, Render handles HTTPS for you
+if (!app.Environment.IsDevelopment())
+{
+    app.UseHttpsRedirection();  // Only enable this for local development or testing
+}
 
 app.UseAuthorization();
 app.MapControllers();
