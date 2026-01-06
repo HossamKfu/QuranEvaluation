@@ -10,13 +10,13 @@ builder.Services.AddSingleton<GoogleSheetsService>();
 builder.Services.AddHttpClient();
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("AllowAllOrigins", policy =>
-    {
-        policy.AllowAnyOrigin()    // Allow all origins
-              .AllowAnyMethod()    // Allow all HTTP methods (GET, POST, etc.)
-              .AllowAnyHeader();   // Allow all headers
+    //options.AddPolicy("AllowAllOrigins", policy =>
+    //{
+    //    policy.AllowAnyOrigin()    // Allow all origins
+    //          .AllowAnyMethod()    // Allow all HTTP methods (GET, POST, etc.)
+    //          .AllowAnyHeader();   // Allow all headers
 
-    });
+    //});
     options.AddPolicy("AllowAllOrigins", policy =>
     {
         policy.WithOrigins("http://127.0.0.1:8080")  // Add the frontend domain
