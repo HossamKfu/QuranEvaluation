@@ -18,10 +18,8 @@ builder.Services.AddCors(options =>
 // Skip HTTPS redirection in development
 if (builder.Environment.IsProduction())
 {
-    builder.Services.AddHttpsRedirection(options =>
-    {
-        options.HttpsPort = 8080;  // Specify HTTPS port for production environment
-    });
+    // Remove this since Render handles HTTPS
+    // builder.Services.AddHttpsRedirection(options => { options.HttpsPort = 443; });
 }
 
 var app = builder.Build();
@@ -38,9 +36,8 @@ if (app.Environment.IsDevelopment())
     });
 }
 
-// Use CORS policy and redirect HTTP to HTTPS
+// Use CORS policy and enable HTTPS redirection only if Render doesn't handle HTTPS (this won't be needed in most cases).
 app.UseCors("AllowAllOrigins");
-app.UseHttpsRedirection();  // Only enables HTTPS redirection in production
 
 app.UseAuthorization();
 app.MapControllers();
