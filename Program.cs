@@ -20,7 +20,7 @@ if (builder.Environment.IsProduction())
 {
     builder.Services.AddHttpsRedirection(options =>
     {
-        options.HttpsPort = 443;  // Specify HTTPS port for production environment
+        options.HttpsPort = 8080;  // Specify HTTPS port for production environment
     });
 }
 
