@@ -38,7 +38,8 @@ public class GoogleSheetsService
         string[] Scopes = { SheetsService.Scope.Spreadsheets };
 
         // جرّب تقرأ الـ JSON من Environment Variable أولاً
-        string? json = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
+        string? json = Environment.GetEnvironmentVariable("credentials");
+        //string? json = Environment.GetEnvironmentVariable("GOOGLE_CREDENTIALS_JSON");
 
         GoogleClientSecrets clientSecrets;
 

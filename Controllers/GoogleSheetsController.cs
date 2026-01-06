@@ -21,6 +21,7 @@ namespace Eval.Controllers
             _googleSheetsService = googleSheetsService;
             _httpClient = httpClient;
         }
+        [HttpGet("triggerTeacherReport")]
         public async Task TriggerTeacherReportAsync(string teacherName)
         {
             // تأكد إن الاسم مشفّر صح (خاصة لأنه عربي)
@@ -34,6 +35,20 @@ namespace Eval.Controllers
             // var bytes = await response.Content.ReadAsByteArrayAsync();
             // var text = await response.Content.ReadAsStringAsync();
         }
+
+        //public async Task TriggerTeacherReportAsync(string teacherName)
+        //{
+        //    // تأكد إن الاسم مشفّر صح (خاصة لأنه عربي)
+        //    var encodedTeacher = Uri.EscapeDataString(teacherName);
+        //    var url = $"{WebAppBaseUrl}?teacher={encodedTeacher}";
+
+        //    var response = await _httpClient.GetAsync(url);
+        //    response.EnsureSuccessStatusCode();
+
+        //    // لو السكربت يرجّع PDF أو JSON تقدر تتعامل هنا:
+        //    // var bytes = await response.Content.ReadAsByteArrayAsync();
+        //    // var text = await response.Content.ReadAsStringAsync();
+        //}
         // POST api/googlesheets/submit
 
         [HttpPost("submit")]
