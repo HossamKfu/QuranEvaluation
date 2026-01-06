@@ -11,7 +11,11 @@ using System.Threading.Tasks;
 public class GoogleSheetsService
 {
     private static SheetsService _sheetsService;
-    
+    private readonly HttpClient _httpClient;
+    public GoogleSheetsService(HttpClient httpClient)
+    {
+        _httpClient = httpClient;
+    }
     public static async Task<SheetsService> GetSheetsServiceAsync()
     {
         if (_sheetsService == null)

@@ -3,6 +3,8 @@
 // Setup services
 builder.Services.AddControllers();
 builder.Services.AddSwaggerGen();
+builder.Services.AddSingleton<GoogleSheetsService>();
+builder.Services.AddHttpClient<GoogleSheetsService>();
 
 // CORS Policy to allow all origins
 builder.Services.AddCors(options =>
